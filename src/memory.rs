@@ -1,3 +1,5 @@
+#[derive(Debug)]
+
 pub struct Memory {
     pub memory: Vec<usize>,
 }
@@ -40,7 +42,6 @@ impl Memory {
 
 #[cfg(test)]
 mod tests {
-    use std::mem;
 
     use super::*;
     #[test]
