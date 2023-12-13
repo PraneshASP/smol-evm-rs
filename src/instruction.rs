@@ -4,13 +4,13 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use crate::execution_context::ExecutionContext;
-use crate::executors::InstructionExecutor;
+use crate::opcodes::OpcodeExecutor;
 
 #[derive(Debug)]
 pub struct Instruction {
     pub opcode: usize,
     pub name: String,
-    pub executor: Box<dyn InstructionExecutor>,
+    pub executor: Box<dyn OpcodeExecutor>,
 }
 
 #[derive(Debug)]
@@ -26,11 +26,7 @@ lazy_static! {
         Mutex::new(HashMap::new());
 }
 impl Instruction {
-    pub fn register_instruction(
-        opcode: usize,
-        name: String,
-        executor: Box<dyn InstructionExecutor>,
-    ) {
+    pub fn register_instruction(opcode: usize, name: String, executor: Box<dyn OpcodeExecutor>) {
         let instruction = Arc::new(Instruction {
             opcode,
             name: name.clone(),
