@@ -8,6 +8,7 @@ pub struct ExecutionContext {
     pub memory: Memory,
     pub pc: usize,
     pub stopped: bool,
+    pub returndata: Bytes,
 }
 
 impl ExecutionContext {
@@ -18,6 +19,7 @@ impl ExecutionContext {
             memory: Memory::new(),
             pc: 0,
             stopped: false,
+            returndata: Bytes::new(),
         }
     }
 
@@ -36,5 +38,10 @@ impl ExecutionContext {
         }
 
         result
+    }
+
+    pub fn set_returndata(&mut self, offset: usize, length: usize) {
+        self.stopped = true;
+        self.returndata = self.memory.load_range(offset, length);
     }
 }
