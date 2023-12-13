@@ -1,6 +1,5 @@
-# smol-evm-rs
-
-## Introduction
+# smol-evm-rs • ![License](https://img.shields.io/badge/license-MIT-brown.svg) ![CI Passing](https://github.com/PraneshASP/smol-evm-rs/actions/workflows/tests.yml/badge.svg) ![Built Using Rust](https://img.shields.io/badge/Built%20Using-Rust-orange.svg) 
+---
 
 `smol-evm-rs` is a Rust port of the [smol-evm](https://github.com/karmacoma-eth/smol-evm) project, originally implemented in Python by karmacoma. This project aims to implement the Ethereum Virtual Machine (EVM) from scratch using Rust. The primary goal of the project is to learn Rust. 
 
@@ -80,6 +79,12 @@ Output : 0x2a00000000000000
  
 > [!NOTE]  
 > Supported Opcodes: `ADD`,`MUL`,`PUSH1`, `MSTORE8`, `RETURN` and `STOP`
+
+## TODO:
+- [X] [Implement Part 1 (execution context)](https://github.com/PraneshASP/smol-evm-rs/tree/part-1)
+- [ ] Add more tests
+- [ ] Implement Part 2 (branching instructions)
+- [ ] Implement Part 3 (calldata and function dispatcher)
 
 ## Acknowledgments
 
