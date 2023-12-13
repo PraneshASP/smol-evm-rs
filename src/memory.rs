@@ -17,14 +17,13 @@ impl Memory {
         Self { memory: Vec::new() }
     }
 
-    pub fn store(&mut self, offset: usize, value: usize) -> Result<(), MemoryError> {
+    pub fn store(&mut self, offset: usize, value: usize) {
         // Memory expansion
         if self.memory.len() <= offset {
             self.memory.resize(1, 0);
         }
 
         self.memory[offset] = value;
-        Ok(())
     }
 
     pub fn load(&mut self, offset: usize) -> usize {

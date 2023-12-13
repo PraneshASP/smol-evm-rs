@@ -57,7 +57,7 @@ impl InstructionExecutor for MSTORE8 {
     fn execute(&self, context: &mut ExecutionContext) {
         let offset = context.stack.pop().unwrap();
         let value = context.stack.pop().unwrap();
-        context.memory.store(offset, value).unwrap();
+        context.memory.store(offset, value);
     }
 }
 
