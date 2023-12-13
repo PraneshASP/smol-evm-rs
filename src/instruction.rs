@@ -44,23 +44,19 @@ impl Instruction {
             let mut instructions_by_opcode = INSTRUCTIONS_BY_OPCODE.lock().unwrap();
             instructions_by_opcode.insert(opcode, instruction);
         }
-
-        println!("Instruction registered: {}", name);
     }
 
     pub fn decode_opcode(
         context: &mut ExecutionContext,
     ) -> Result<Arc<Instruction>, InstructionError> {
-        if context.pc >= context.code.len() {
-            return Err(InstructionError::InvalidCodeOffset {
-                code: context.code.clone(),
-                pc: context.pc,
-            });
-        }
-
         let opcode = context.read_code(1);
 
         let instructions_by_opcode = INSTRUCTIONS_BY_OPCODE.lock().unwrap();
-        Ok(instructions_by_opcode.get(&opcode).cloned().unwrap())
+
+        if context.pc > context.code.len() {
+            Ok(instructions_by_opcode.get(&0x00).cloned().unwrap()) // STOP if pc goes over code length
+        } else {
+            Ok(instructions_by_opcode.get(&opcode).cloned().unwrap())
+        }
     }
 }
