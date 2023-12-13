@@ -14,6 +14,12 @@ pub struct ADD;
 #[derive(Debug)]
 pub struct MUL;
 
+#[derive(Debug)]
+pub struct MSTORE8;
+
+#[derive(Debug)]
+pub struct RETURN;
+
 pub trait InstructionExecutor: Send + Sync + Debug {
     fn execute(&self, context: &mut ExecutionContext);
 }
@@ -44,5 +50,21 @@ impl InstructionExecutor for MUL {
         let value1 = context.stack.pop().unwrap();
         let value2 = context.stack.pop().unwrap();
         context.stack.push(value1.wrapping_mul(value2)).unwrap();
+    }
+}
+
+impl InstructionExecutor for MSTORE8 {
+    fn execute(&self, context: &mut ExecutionContext) {
+        let offset = context.stack.pop().unwrap();
+        let value = context.stack.pop().unwrap();
+        context.memory.store(offset, value).unwrap();
+    }
+}
+
+impl InstructionExecutor for RETURN {
+    fn execute(&self, context: &mut ExecutionContext) {
+        let offset = context.stack.pop().unwrap();
+        let length = context.stack.pop().unwrap();
+        context.set_returndata(offset, length);
     }
 }
