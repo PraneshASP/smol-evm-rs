@@ -1,7 +1,6 @@
 use bytes::{BufMut, Bytes, BytesMut};
 
 #[derive(Debug)]
-
 pub struct Memory {
     pub memory: Vec<usize>,
 }
