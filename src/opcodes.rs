@@ -47,8 +47,8 @@ impl OpcodeExecutor for Opcodes {
             }
             Opcodes::MSTORE8 => {
                 let offset = context.stack.pop().unwrap();
-                let value = context.stack.pop().unwrap();
-                context.memory.store(offset, value);
+                let value = context.stack.pop().unwrap() % 256;
+                context.memory.store(offset, value).unwrap();
             }
             Opcodes::RETURN => {
                 let offset = context.stack.pop().unwrap();
