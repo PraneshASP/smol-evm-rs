@@ -50,7 +50,7 @@ impl Memory {
         bytes.freeze() // Convert BytesMut to Bytes
     }
 
-    fn active_words(&self) -> usize {
+    pub fn active_words(&self) -> usize {
         match self.memory.len().checked_div(32) {
             Some(v) => v,
             None => todo!(),
