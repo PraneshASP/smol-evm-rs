@@ -9,6 +9,7 @@ pub enum Opcodes {
     MUL,
     MSTORE8,
     RETURN,
+    PC,
 }
 
 impl Opcodes {
@@ -19,6 +20,7 @@ impl Opcodes {
         Instruction::register_instruction(0x02, "MUL".to_string(), Box::new(Opcodes::MUL));
         Instruction::register_instruction(0x53, "MSTORE8".to_string(), Box::new(Opcodes::MSTORE8));
         Instruction::register_instruction(0xf3, "RETURN".to_string(), Box::new(Opcodes::RETURN));
+        Instruction::register_instruction(0x58, "PC".to_string(), Box::new(Opcodes::PC));
     }
 }
 pub trait OpcodeExecutor: Send + Sync + Debug {
@@ -55,6 +57,7 @@ impl OpcodeExecutor for Opcodes {
                 let length = context.stack.pop().unwrap();
                 context.set_returndata(offset, length);
             }
+            Opcodes::PC => context.stack.push(context.pc).unwrap(),
         }
     }
 }
