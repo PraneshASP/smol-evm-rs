@@ -6,6 +6,7 @@ pub enum Opcodes {
     STOP,
     ADD,
     MUL,
+    SUB,
     MSTORE8,
     RETURN,
     PC,
@@ -78,6 +79,16 @@ pub enum Opcodes {
     SWAP14,
     SWAP15,
     SWAP16,
+
+    // JUMP Opcodes
+    JUMP,
+    JUMPI,
+    JUMPDEST,
+}
+
+#[derive(Debug)]
+pub enum Errors {
+    InvalidJumpDestination(usize),
 }
 
 impl Opcodes {
@@ -85,6 +96,8 @@ impl Opcodes {
         Instruction::register_instruction(0x00, "STOP".to_string(), Box::new(Opcodes::STOP));
         Instruction::register_instruction(0x01, "ADD".to_string(), Box::new(Opcodes::ADD));
         Instruction::register_instruction(0x02, "MUL".to_string(), Box::new(Opcodes::MUL));
+        Instruction::register_instruction(0x03, "SUB".to_string(), Box::new(Opcodes::SUB));
+
         Instruction::register_instruction(0x53, "MSTORE8".to_string(), Box::new(Opcodes::MSTORE8));
         Instruction::register_instruction(0xf3, "RETURN".to_string(), Box::new(Opcodes::RETURN));
         Instruction::register_instruction(0x58, "PC".to_string(), Box::new(Opcodes::PC));
@@ -161,6 +174,15 @@ impl Opcodes {
         Instruction::register_instruction(0x9D, "SWAP14".to_string(), Box::new(Opcodes::SWAP14));
         Instruction::register_instruction(0x9E, "SWAP15".to_string(), Box::new(Opcodes::SWAP15));
         Instruction::register_instruction(0x9F, "SWAP16".to_string(), Box::new(Opcodes::SWAP16));
+
+        // JUMP Instructions
+        Instruction::register_instruction(0x56, "JUMP".to_string(), Box::new(Opcodes::JUMP));
+        Instruction::register_instruction(0x57, "JUMPI".to_string(), Box::new(Opcodes::JUMPI));
+        Instruction::register_instruction(
+            0x5B,
+            "JUMPDEST".to_string(),
+            Box::new(Opcodes::JUMPDEST),
+        );
     }
 }
 pub trait OpcodeExecutor: Send + Sync + Debug {
@@ -183,6 +205,11 @@ impl OpcodeExecutor for Opcodes {
                 let value1 = context.stack.pop().unwrap();
                 let value2 = context.stack.pop().unwrap();
                 context.stack.push(value1.wrapping_mul(value2)).unwrap();
+            }
+            Opcodes::SUB => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+                context.stack.push(a.checked_sub(b).unwrap()).unwrap();
             }
             Opcodes::MSTORE8 => {
                 let offset = context.stack.pop().unwrap();
@@ -443,6 +470,28 @@ impl OpcodeExecutor for Opcodes {
             Opcodes::SWAP16 => {
                 context.stack.swap(16).unwrap();
             }
+
+            // JUMP Instructions
+            Opcodes::JUMP => {
+                let target_pc = context.stack.pop().unwrap();
+                if context.jumpdests.contains(&target_pc) {
+                    context.set_pc(target_pc);
+                } else {
+                    panic!("Invalid JumpDestination"); //TODO: Handle gracefully
+                }
+            }
+            Opcodes::JUMPI => {
+                let target_pc = context.stack.pop().unwrap();
+                let condition = context.stack.pop().unwrap();
+                if condition != 0 {
+                    if context.jumpdests.contains(&target_pc) {
+                        context.set_pc(target_pc);
+                    } else {
+                        panic!("Invalid JumpDestination"); //TODO: Handle gracefully
+                    }
+                }
+            }
+            Opcodes::JUMPDEST => {}
         }
     }
 }
