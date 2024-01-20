@@ -16,13 +16,14 @@ pub struct Instruction {
 #[derive(Debug)]
 pub enum InstructionError {
     InvalidCodeOffset { code: Bytes, pc: usize },
+    OpcodeNotFound(usize),
 }
 
 // Note to self: Rust requires the use of a mutex or similar mechanism for mutable statics due to thread safety concerns.
 // Mutex and lazy_static approach is one way to handle this
 lazy_static! {
     static ref INSTRUCTIONS: Mutex<Vec<Arc<Instruction>>> = Mutex::new(vec![]);
-    static ref INSTRUCTIONS_BY_OPCODE: Mutex<HashMap<usize, Arc<Instruction>>> =
+    pub static ref INSTRUCTIONS_BY_OPCODE: Mutex<HashMap<usize, Arc<Instruction>>> =
         Mutex::new(HashMap::new());
 }
 impl Instruction {
@@ -52,7 +53,10 @@ impl Instruction {
         if context.pc > context.code.len() {
             Ok(instructions_by_opcode.get(&0x00).cloned().unwrap()) // STOP if pc goes over code length
         } else {
-            Ok(instructions_by_opcode.get(&opcode).cloned().unwrap())
+            match instructions_by_opcode.get(&opcode) {
+                Some(instruction) => Ok(instruction.to_owned()),
+                None => Err(InstructionError::OpcodeNotFound(opcode)),
+            }
         }
     }
 }
