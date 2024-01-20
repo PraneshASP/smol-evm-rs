@@ -42,6 +42,24 @@ pub enum Opcodes {
     PUSH30,
     PUSH31,
     PUSH32,
+
+    // DUP Opcodes
+    DUP1,
+    DUP2,
+    DUP3,
+    DUP4,
+    DUP5,
+    DUP6,
+    DUP7,
+    DUP8,
+    DUP9,
+    DUP10,
+    DUP11,
+    DUP12,
+    DUP13,
+    DUP14,
+    DUP15,
+    DUP16,
 }
 
 impl Opcodes {
@@ -85,6 +103,22 @@ impl Opcodes {
         Instruction::register_instruction(0x7D, "PUSH30".to_string(), Box::new(Opcodes::PUSH30));
         Instruction::register_instruction(0x7E, "PUSH31".to_string(), Box::new(Opcodes::PUSH31));
         Instruction::register_instruction(0x7F, "PUSH32".to_string(), Box::new(Opcodes::PUSH32));
+        Instruction::register_instruction(0x80, "DUP1".to_string(), Box::new(Opcodes::DUP1));
+        Instruction::register_instruction(0x81, "DUP2".to_string(), Box::new(Opcodes::DUP2));
+        Instruction::register_instruction(0x82, "DUP3".to_string(), Box::new(Opcodes::DUP3));
+        Instruction::register_instruction(0x83, "DUP4".to_string(), Box::new(Opcodes::DUP4));
+        Instruction::register_instruction(0x84, "DUP5".to_string(), Box::new(Opcodes::DUP5));
+        Instruction::register_instruction(0x85, "DUP6".to_string(), Box::new(Opcodes::DUP6));
+        Instruction::register_instruction(0x86, "DUP7".to_string(), Box::new(Opcodes::DUP7));
+        Instruction::register_instruction(0x87, "DUP8".to_string(), Box::new(Opcodes::DUP8));
+        Instruction::register_instruction(0x88, "DUP9".to_string(), Box::new(Opcodes::DUP9));
+        Instruction::register_instruction(0x89, "DUP10".to_string(), Box::new(Opcodes::DUP10));
+        Instruction::register_instruction(0x8A, "DUP11".to_string(), Box::new(Opcodes::DUP11));
+        Instruction::register_instruction(0x8B, "DUP12".to_string(), Box::new(Opcodes::DUP12));
+        Instruction::register_instruction(0x8C, "DUP13".to_string(), Box::new(Opcodes::DUP13));
+        Instruction::register_instruction(0x8D, "DUP14".to_string(), Box::new(Opcodes::DUP14));
+        Instruction::register_instruction(0x8E, "DUP15".to_string(), Box::new(Opcodes::DUP15));
+        Instruction::register_instruction(0x8F, "DUP16".to_string(), Box::new(Opcodes::DUP16));
     }
 }
 pub trait OpcodeExecutor: Send + Sync + Debug {
@@ -249,6 +283,72 @@ impl OpcodeExecutor for Opcodes {
             }
             Opcodes::PUSH32 => {
                 let value = context.read_code(32);
+                context.stack.push(value).unwrap();
+            }
+
+            // DUP Opcodes
+            Opcodes::DUP1 => {
+                let value = context.stack.peek(0).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP2 => {
+                let value = context.stack.peek(1).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP3 => {
+                let value = context.stack.peek(2).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP4 => {
+                let value = context.stack.peek(3).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP5 => {
+                let value = context.stack.peek(4).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP6 => {
+                let value = context.stack.peek(5).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP7 => {
+                let value = context.stack.peek(6).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP8 => {
+                let value = context.stack.peek(7).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP9 => {
+                let value = context.stack.peek(8).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP10 => {
+                let value = context.stack.peek(9).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP11 => {
+                let value = context.stack.peek(10).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP12 => {
+                let value = context.stack.peek(11).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP13 => {
+                let value = context.stack.peek(12).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP14 => {
+                let value = context.stack.peek(13).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP15 => {
+                let value = context.stack.peek(14).unwrap();
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::DUP16 => {
+                let value = context.stack.peek(15).unwrap();
                 context.stack.push(value).unwrap();
             }
         }
