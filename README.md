@@ -1,12 +1,16 @@
 # smol-evm-rs • ![License](https://img.shields.io/badge/license-MIT-brown.svg) [![CI](https://github.com/PraneshASP/smol-evm-rs/actions/workflows/tests.yml/badge.svg)](https://github.com/PraneshASP/smol-evm-rs/actions/workflows/tests.yml) ![Built Using Rust](https://img.shields.io/badge/Built%20Using-Rust-orange.svg) 
 ---
 
+> [!WARNING]  
+> It is important to note that the code is not optimized and may contain bugs. It is primarily intended for educational purposes. So don't use any code from this repo for production.
+
 `smol-evm-rs` is a Rust port of the [smol-evm](https://github.com/karmacoma-eth/smol-evm) project, originally implemented in Python by karmacoma. This project aims to implement the Ethereum Virtual Machine (EVM) from scratch using Rust. The primary goal of the project is to learn Rust. 
 
-This project is currently a work in progress under the `part-1` branch. 
 
-> [!WARNING]  
-> It is important to note that the code is not optimized and is primarily intended for educational purposes.
+- [X] [**Part1**: The execution context ](https://github.com/PraneshASP/smol-evm-rs/tree/part-1)
+- [X] [**Part2**: Branching instructions](https://github.com/PraneshASP/smol-evm-rs/tree/part-2)(This branch)
+- [ ] Part 3: Calldata and Function dispatcher - Soon ⏳
+
 
 ## Getting started:
 
@@ -21,9 +25,9 @@ This project is currently a work in progress under the `part-1` branch.
    git clone https://github.com/PraneshASP/smol-evm-rs.git
    cd smol-evm-rs
    ```
-2. Switch to the `part-1` branch:
+2. Switch to the `part-2` branch:
     ```bash
-    git checkout part-1
+    git checkout part-2
     ```
 3. Build the project:
    ```bash
@@ -35,57 +39,85 @@ This project is currently a work in progress under the `part-1` branch.
    ```
  
  ### Example:
- Run: `cargo run 600660070260005360016000f3`
+ Run: `cargo run 60048060005b8160125760005360016000f35b8201906001900390600556`
+
+ > The above bytecode calculates 4.pow(2) (four-squared)
  
- It should return`0x2a` as output along with the memory, stack and program counter values.
+ It should return`0x10` as output along with the memory, stack and program counter values.
 
 ```bash
 
+Opcode: 96
 "PUSH1" @ pc=0
-Stack: [6]
+Stack: [4]
 Memory: []
 ---------
-"PUSH1" @ pc=2
-Stack: [6, 7]
+Opcode: 128
+"DUP1" @ pc=2
+Stack: [4, 4]
 Memory: []
 ---------
-"MUL" @ pc=4
-Stack: [42]
+Opcode: 96
+"PUSH1" @ pc=3
+Stack: [4, 4, 0]
 Memory: []
 ---------
-"PUSH1" @ pc=5
-Stack: [42, 0]
+Opcode: 3
+"SUB" @ pc=25
+Stack: [4, 8, 2]
 Memory: []
 ---------
-"MSTORE8" @ pc=7
-Stack: []
-Memory: [42]
+Opcode: 144
+"SWAP1" @ pc=26
+Stack: [4, 2, 8]
+Memory: []
 ---------
-"PUSH1" @ pc=8
-Stack: [1]
-Memory: [42]
+
+...
+
+...
+
+...
+
 ---------
+Opcode: 87
+"JUMPI" @ pc=9
+Stack: [4, 0, 16]
+Memory: []
+---------
+Opcode: 96
 "PUSH1" @ pc=10
-Stack: [1, 0]
-Memory: [42]
+Stack: [4, 0, 16, 0]
+Memory: []
 ---------
-"RETURN" @ pc=12
-Stack: []
-Memory: [42]
+Opcode: 83
+"MSTORE8" @ pc=12
+Stack: [4, 0]
+Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---------
-Output : 0x2a00000000000000
+Opcode: 96
+"PUSH1" @ pc=13
+Stack: [4, 0, 1]
+Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+---------
+Opcode: 96
+"PUSH1" @ pc=15
+Stack: [4, 0, 1, 0]
+Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+---------
+Opcode: 243
+"RETURN" @ pc=17
+Stack: [4, 0]
+Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+---------
+Output : 0x1000000000000000
 
 ```
  
 > [!NOTE]  
-> Supported Opcodes: `ADD`,`MUL`,`PUSH1`, `MSTORE8`, `RETURN` and `STOP`
+> Supported Opcodes: `ADD`,`SUB`,`MUL`,`PUSH1`, `MSTORE8`, `RETURN`, `STOP`,`JUMP`, `JUMPI`,`JUMPDEST`, `SWAP[1-16]`, `PUSH[1-32]`and `DUP[1-16]`
 
-## TODO:
-- [X] [Implement Part 1 (execution context)](https://github.com/PraneshASP/smol-evm-rs/tree/part-1)
-- [ ] Add more tests
-- [ ] Implement Part 2 (branching instructions)
-- [ ] Implement Part 3 (calldata and function dispatcher)
 
 ## Acknowledgments
 
-- [karmacoma-eth](https://github.com/karmacoma-eth) for the original Python implementation of smol-evm.
+- [karmacoma-eth](https://github.com/karmacoma-eth) for the original Python implementation of `smol-evm`.

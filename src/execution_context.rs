@@ -1,4 +1,8 @@
-use crate::{memory::Memory, stack::Stack};
+use crate::{
+    instruction::{Instruction, INSTRUCTIONS_BY_OPCODE},
+    memory::Memory,
+    stack::Stack,
+};
 use bytes::Bytes;
 
 #[derive(Debug)]
@@ -9,17 +13,19 @@ pub struct ExecutionContext {
     pub pc: usize,
     pub stopped: bool,
     pub returndata: Bytes,
+    pub jumpdests: Vec<usize>,
 }
 
 impl ExecutionContext {
     pub fn new(code: Bytes) -> Self {
         Self {
-            code,
+            code: code.clone(),
             stack: Stack::new(1024),
             memory: Memory::new(),
             pc: 0,
             stopped: false,
             returndata: Bytes::new(),
+            jumpdests: Self::valid_jump_destinations(code),
         }
     }
 
@@ -43,5 +49,25 @@ impl ExecutionContext {
     pub fn set_returndata(&mut self, offset: usize, length: usize) {
         self.stopped = true;
         self.returndata = self.memory.load_range(offset, length);
+    }
+
+    pub fn set_pc(&mut self, pc: usize) {
+        self.pc = pc;
+    }
+
+    pub fn valid_jump_destinations(code: Bytes) -> Vec<usize> {
+        let mut jumpdests: Vec<usize> = Vec::new();
+
+        let mut i = 0;
+        while i < code.len() {
+            let current_op = code[i] as usize;
+            if current_op == 0x5B {
+                jumpdests.push(i);
+            } else if 0x60 <= current_op && current_op <= 0x7F {
+                i += current_op - 0x60 + 1
+            }
+            i += 1;
+        }
+        jumpdests
     }
 }
