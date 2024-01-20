@@ -60,6 +60,24 @@ pub enum Opcodes {
     DUP14,
     DUP15,
     DUP16,
+
+    // SWAP Opcodes
+    SWAP1,
+    SWAP2,
+    SWAP3,
+    SWAP4,
+    SWAP5,
+    SWAP6,
+    SWAP7,
+    SWAP8,
+    SWAP9,
+    SWAP10,
+    SWAP11,
+    SWAP12,
+    SWAP13,
+    SWAP14,
+    SWAP15,
+    SWAP16,
 }
 
 impl Opcodes {
@@ -71,6 +89,9 @@ impl Opcodes {
         Instruction::register_instruction(0xf3, "RETURN".to_string(), Box::new(Opcodes::RETURN));
         Instruction::register_instruction(0x58, "PC".to_string(), Box::new(Opcodes::PC));
         Instruction::register_instruction(0x59, "MSIZE".to_string(), Box::new(Opcodes::MSIZE));
+
+        // PUSH Instructions
+
         Instruction::register_instruction(0x60, "PUSH1".to_string(), Box::new(Opcodes::PUSH1));
         Instruction::register_instruction(0x61, "PUSH2".to_string(), Box::new(Opcodes::PUSH2));
         Instruction::register_instruction(0x62, "PUSH3".to_string(), Box::new(Opcodes::PUSH3));
@@ -103,6 +124,9 @@ impl Opcodes {
         Instruction::register_instruction(0x7D, "PUSH30".to_string(), Box::new(Opcodes::PUSH30));
         Instruction::register_instruction(0x7E, "PUSH31".to_string(), Box::new(Opcodes::PUSH31));
         Instruction::register_instruction(0x7F, "PUSH32".to_string(), Box::new(Opcodes::PUSH32));
+
+        // DUP Instructions
+
         Instruction::register_instruction(0x80, "DUP1".to_string(), Box::new(Opcodes::DUP1));
         Instruction::register_instruction(0x81, "DUP2".to_string(), Box::new(Opcodes::DUP2));
         Instruction::register_instruction(0x82, "DUP3".to_string(), Box::new(Opcodes::DUP3));
@@ -119,6 +143,24 @@ impl Opcodes {
         Instruction::register_instruction(0x8D, "DUP14".to_string(), Box::new(Opcodes::DUP14));
         Instruction::register_instruction(0x8E, "DUP15".to_string(), Box::new(Opcodes::DUP15));
         Instruction::register_instruction(0x8F, "DUP16".to_string(), Box::new(Opcodes::DUP16));
+
+        // SWAP Instructions
+        Instruction::register_instruction(0x90, "SWAP1".to_string(), Box::new(Opcodes::SWAP1));
+        Instruction::register_instruction(0x91, "SWAP2".to_string(), Box::new(Opcodes::SWAP2));
+        Instruction::register_instruction(0x92, "SWAP3".to_string(), Box::new(Opcodes::SWAP3));
+        Instruction::register_instruction(0x93, "SWAP4".to_string(), Box::new(Opcodes::SWAP4));
+        Instruction::register_instruction(0x94, "SWAP5".to_string(), Box::new(Opcodes::SWAP5));
+        Instruction::register_instruction(0x95, "SWAP6".to_string(), Box::new(Opcodes::SWAP6));
+        Instruction::register_instruction(0x96, "SWAP7".to_string(), Box::new(Opcodes::SWAP7));
+        Instruction::register_instruction(0x97, "SWAP8".to_string(), Box::new(Opcodes::SWAP8));
+        Instruction::register_instruction(0x98, "SWAP9".to_string(), Box::new(Opcodes::SWAP9));
+        Instruction::register_instruction(0x99, "SWAP10".to_string(), Box::new(Opcodes::SWAP10));
+        Instruction::register_instruction(0x9A, "SWAP11".to_string(), Box::new(Opcodes::SWAP11));
+        Instruction::register_instruction(0x9B, "SWAP12".to_string(), Box::new(Opcodes::SWAP12));
+        Instruction::register_instruction(0x9C, "SWAP13".to_string(), Box::new(Opcodes::SWAP13));
+        Instruction::register_instruction(0x9D, "SWAP14".to_string(), Box::new(Opcodes::SWAP14));
+        Instruction::register_instruction(0x9E, "SWAP15".to_string(), Box::new(Opcodes::SWAP15));
+        Instruction::register_instruction(0x9F, "SWAP16".to_string(), Box::new(Opcodes::SWAP16));
     }
 }
 pub trait OpcodeExecutor: Send + Sync + Debug {
@@ -350,6 +392,56 @@ impl OpcodeExecutor for Opcodes {
             Opcodes::DUP16 => {
                 let value = context.stack.peek(15).unwrap();
                 context.stack.push(value).unwrap();
+            }
+
+            // SWAP Opcodes
+            Opcodes::SWAP1 => {
+                context.stack.swap(1).unwrap();
+            }
+            Opcodes::SWAP2 => {
+                context.stack.swap(2).unwrap();
+            }
+            Opcodes::SWAP3 => {
+                context.stack.swap(3).unwrap();
+            }
+            Opcodes::SWAP4 => {
+                context.stack.swap(4).unwrap();
+            }
+            Opcodes::SWAP5 => {
+                context.stack.swap(5).unwrap();
+            }
+            Opcodes::SWAP6 => {
+                context.stack.swap(6).unwrap();
+            }
+            Opcodes::SWAP7 => {
+                context.stack.swap(7).unwrap();
+            }
+            Opcodes::SWAP8 => {
+                context.stack.swap(8).unwrap();
+            }
+            Opcodes::SWAP9 => {
+                context.stack.swap(9).unwrap();
+            }
+            Opcodes::SWAP10 => {
+                context.stack.swap(10).unwrap();
+            }
+            Opcodes::SWAP11 => {
+                context.stack.swap(11).unwrap();
+            }
+            Opcodes::SWAP12 => {
+                context.stack.swap(12).unwrap();
+            }
+            Opcodes::SWAP13 => {
+                context.stack.swap(13).unwrap();
+            }
+            Opcodes::SWAP14 => {
+                context.stack.swap(14).unwrap();
+            }
+            Opcodes::SWAP15 => {
+                context.stack.swap(15).unwrap();
+            }
+            Opcodes::SWAP16 => {
+                context.stack.swap(16).unwrap();
             }
         }
     }
