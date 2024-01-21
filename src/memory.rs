@@ -1,5 +1,3 @@
-use std::ops::BitAnd;
-
 use bytes::{BufMut, Bytes, BytesMut};
 
 #[derive(Debug)]

@@ -8,8 +8,8 @@
 
 
 - [X] [**Part1**: The execution context ](https://github.com/PraneshASP/smol-evm-rs/tree/part-1)
-- [X] [**Part2**: Branching instructions](https://github.com/PraneshASP/smol-evm-rs/tree/part-2)(This branch)
-- [ ] Part 3: Calldata and Function dispatcher - Soon ⏳
+- [X] [**Part2**: Branching instructions](https://github.com/PraneshASP/smol-evm-rs/tree/part-2) 
+- [ ] **Part 3**: [Calldata and Function dispatcher](https://github.com/PraneshASP/smol-evm-rs/tree/part-3)(This branch)
 
 
 ## Getting started:
