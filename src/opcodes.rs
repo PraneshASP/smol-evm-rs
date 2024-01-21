@@ -7,6 +7,11 @@ pub enum Opcodes {
     ADD,
     MUL,
     SUB,
+    LT,
+    GT,
+    EQ,
+    SHR,
+    ISZERO,
     MSTORE8,
     RETURN,
     PC,
@@ -183,6 +188,13 @@ impl Opcodes {
             "JUMPDEST".to_string(),
             Box::new(Opcodes::JUMPDEST),
         );
+
+        // Compare Instructions
+        Instruction::register_instruction(0x10, "LT".to_string(), Box::new(Opcodes::LT));
+        Instruction::register_instruction(0x11, "GT".to_string(), Box::new(Opcodes::GT));
+        Instruction::register_instruction(0x14, "EQ".to_string(), Box::new(Opcodes::EQ));
+        Instruction::register_instruction(0x1C, "SHR".to_string(), Box::new(Opcodes::SHR));
+        Instruction::register_instruction(0x15, "ISZERO".to_string(), Box::new(Opcodes::ISZERO));
     }
 }
 pub trait OpcodeExecutor: Send + Sync + Debug {
@@ -492,6 +504,52 @@ impl OpcodeExecutor for Opcodes {
                 }
             }
             Opcodes::JUMPDEST => {}
+
+            Opcodes::LT => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                if a < b {
+                    context.stack.push(1).unwrap();
+                } else {
+                    context.stack.push(0).unwrap();
+                }
+            }
+            Opcodes::GT => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                if a > b {
+                    context.stack.push(1).unwrap();
+                } else {
+                    context.stack.push(0).unwrap();
+                }
+            }
+            Opcodes::EQ => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                if a == b {
+                    context.stack.push(1).unwrap();
+                } else {
+                    context.stack.push(0).unwrap();
+                }
+            }
+            Opcodes::ISZERO => {
+                let a = context.stack.pop().unwrap();
+
+                if a == 0 {
+                    context.stack.push(1).unwrap();
+                } else {
+                    context.stack.push(0).unwrap();
+                }
+            }
+            Opcodes::SHR => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                context.stack.push(b >> a).unwrap();
+            }
         }
     }
 }
