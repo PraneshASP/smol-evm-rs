@@ -105,7 +105,7 @@ Output : 0x1000000000000000
 ```
  
 > [!NOTE]  
-> Supported Opcodes: `ADD`,`SUB`,`MUL`,`PUSH1`, `MSTORE8`, `RETURN`, `STOP`,`JUMP`, `JUMPI`,`JUMPDEST`,`GT` ,`LT`, `ISZERO`,`SHR`,SHL`,`CALLDATALOAD`, `CALLDATASIZE`, `CALLVALUE`,`SWAP[1-16]`, `PUSH[0-32]`and `DUP[1-16]`
+> Supported Opcodes: `ADD`,`SUB`,`MUL`,`PUSH1`, `MSTORE8`, `RETURN`, `STOP`,`JUMP`, `JUMPI`,`JUMPDEST`,`GT`,`LT`,`ISZERO`,`SHR`,`SHL`,`CALLDATALOAD`, `CALLDATASIZE`, `CALLVALUE`,`SWAP[1-16]`, `PUSH[0-32]`and `DUP[1-16]`
 
 ### Improvement ideas:
 - Make word size 32 instead of 16.
