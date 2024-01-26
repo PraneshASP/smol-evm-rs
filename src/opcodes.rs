@@ -242,9 +242,10 @@ impl OpcodeExecutor for Opcodes {
                 let b = context.stack.pop().unwrap();
                 context.stack.push(a.checked_sub(b).unwrap()).unwrap();
             }
+
             Opcodes::MSTORE8 => {
                 let offset = context.stack.pop().unwrap();
-                let value = context.stack.pop().unwrap() % 256;
+                let value = context.stack.pop().unwrap() % 128;
                 context.memory.store(offset, value).unwrap();
             }
             Opcodes::RETURN => {
