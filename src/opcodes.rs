@@ -12,6 +12,9 @@ pub enum Opcodes {
     EQ,
     SHR,
     ISZERO,
+    CALLVALUE,
+    CALLDATALOAD,
+    CALLDATASIZE,
     MSTORE8,
     RETURN,
     PC,
@@ -195,6 +198,22 @@ impl Opcodes {
         Instruction::register_instruction(0x14, "EQ".to_string(), Box::new(Opcodes::EQ));
         Instruction::register_instruction(0x1C, "SHR".to_string(), Box::new(Opcodes::SHR));
         Instruction::register_instruction(0x15, "ISZERO".to_string(), Box::new(Opcodes::ISZERO));
+
+        Instruction::register_instruction(
+            0x34,
+            "CALLVALUE".to_string(),
+            Box::new(Opcodes::CALLVALUE),
+        );
+        Instruction::register_instruction(
+            0x35,
+            "CALLDATALOAD".to_string(),
+            Box::new(Opcodes::CALLDATALOAD),
+        );
+        Instruction::register_instruction(
+            0x36,
+            "CALLDATASIZE".to_string(),
+            Box::new(Opcodes::CALLDATASIZE),
+        );
     }
 }
 pub trait OpcodeExecutor: Send + Sync + Debug {
@@ -236,7 +255,7 @@ impl OpcodeExecutor for Opcodes {
             Opcodes::PC => context.stack.push(context.pc).unwrap(),
             Opcodes::MSIZE => context
                 .stack
-                .push(32 * (context.memory.active_words()))
+                .push(16 * (context.memory.active_words()))
                 .unwrap(),
             Opcodes::PUSH1 => {
                 let value = context.read_code(1);
@@ -549,6 +568,17 @@ impl OpcodeExecutor for Opcodes {
                 let b = context.stack.pop().unwrap();
 
                 context.stack.push(b >> a).unwrap();
+            }
+            Opcodes::CALLVALUE => {
+                context.stack.push(0).unwrap();
+            }
+            Opcodes::CALLDATALOAD => {
+                let offset = context.stack.pop().unwrap();
+                let value = context.calldata.read_word(offset) as usize;
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::CALLDATASIZE => {
+                context.stack.push(context.calldata.data.len()).unwrap();
             }
         }
     }

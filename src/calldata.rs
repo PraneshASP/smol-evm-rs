@@ -1,5 +1,4 @@
 use bytes::Bytes;
-use primitive_types::U256;
 #[derive(Debug)]
 pub struct Calldata {
     pub data: Bytes,
@@ -17,13 +16,13 @@ impl Calldata {
             0
         }
     }
-
-    pub fn read_word(&self, offset: usize) -> U256 {
-        let mut bytes = [0u8; 32];
-        for i in offset..offset + 32 {
-            bytes[i] = self.read_byte(i)
+    // TODO: Change to handle U256
+    pub fn read_word(&self, offset: usize) -> u128 {
+        let mut bytes = [0u8; 16];
+        for i in offset..offset + 16 {
+            bytes[i] = self.read_byte(i) as u8
         }
-        U256::from_big_endian(&bytes)
+        u128::from_be_bytes(bytes)
     }
 }
 
@@ -51,15 +50,30 @@ mod tests {
     }
     #[test]
     fn test_read_word() {
-        let hex_data = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-        let data = match hex::decode(hex_data) {
+        // Extended hex_data to 32 hex digits (16 bytes)
+        let hex_data = "0123456789abcdef0123456789abcdef";
+        let data = match hex::decode(&hex_data) {
             Ok(bytes) => Bytes::from(bytes),
             Err(e) => panic!("Failed to decode hex: {}", e),
         };
         let calldata = Calldata::new(data);
 
-        let expected_word_start =
-            U256::from_big_endian(&hex::decode(hex_data[..64].to_string()).unwrap());
-        assert_eq!(calldata.read_word(0), expected_word_start);
+        let offset = 0;
+
+        // Calculate the expected u128 value from the 16 bytes starting at the offset
+        let expected_word = u128::from_be_bytes(
+            hex::decode(&hex_data[offset * 2..offset * 2 + 32])
+                .unwrap()
+                .try_into()
+                .unwrap(),
+        );
+
+        let word = calldata.read_word(offset);
+
+        assert_eq!(
+            word, expected_word,
+            "read_word did not return the expected value at offset {}",
+            offset
+        );
     }
 }
