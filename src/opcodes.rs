@@ -11,6 +11,7 @@ pub enum Opcodes {
     GT,
     EQ,
     SHR,
+    SHL,
     ISZERO,
     CALLVALUE,
     CALLDATALOAD,
@@ -19,6 +20,7 @@ pub enum Opcodes {
     RETURN,
     PC,
     MSIZE,
+    PUSH0,
     PUSH1,
     PUSH2,
     PUSH3,
@@ -112,7 +114,7 @@ impl Opcodes {
         Instruction::register_instruction(0x59, "MSIZE".to_string(), Box::new(Opcodes::MSIZE));
 
         // PUSH Instructions
-
+        Instruction::register_instruction(0x5F, "PUSH0".to_string(), Box::new(Opcodes::PUSH0));
         Instruction::register_instruction(0x60, "PUSH1".to_string(), Box::new(Opcodes::PUSH1));
         Instruction::register_instruction(0x61, "PUSH2".to_string(), Box::new(Opcodes::PUSH2));
         Instruction::register_instruction(0x62, "PUSH3".to_string(), Box::new(Opcodes::PUSH3));
@@ -196,6 +198,7 @@ impl Opcodes {
         Instruction::register_instruction(0x10, "LT".to_string(), Box::new(Opcodes::LT));
         Instruction::register_instruction(0x11, "GT".to_string(), Box::new(Opcodes::GT));
         Instruction::register_instruction(0x14, "EQ".to_string(), Box::new(Opcodes::EQ));
+        Instruction::register_instruction(0x1B, "SHL".to_string(), Box::new(Opcodes::SHL));
         Instruction::register_instruction(0x1C, "SHR".to_string(), Box::new(Opcodes::SHR));
         Instruction::register_instruction(0x15, "ISZERO".to_string(), Box::new(Opcodes::ISZERO));
 
@@ -258,6 +261,9 @@ impl OpcodeExecutor for Opcodes {
                 .stack
                 .push(16 * (context.memory.active_words()))
                 .unwrap(),
+            Opcodes::PUSH0 => {
+                context.stack.push(0).unwrap();
+            }
             Opcodes::PUSH1 => {
                 let value = context.read_code(1);
                 context.stack.push(value).unwrap();
@@ -563,6 +569,12 @@ impl OpcodeExecutor for Opcodes {
                 } else {
                     context.stack.push(0).unwrap();
                 }
+            }
+            Opcodes::SHL => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                context.stack.push(b << a).unwrap();
             }
             Opcodes::SHR => {
                 let a = context.stack.pop().unwrap();
