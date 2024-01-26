@@ -1,4 +1,5 @@
 use crate::{
+    calldata::Calldata,
     instruction::{Instruction, INSTRUCTIONS_BY_OPCODE},
     memory::Memory,
     stack::Stack,
@@ -14,6 +15,7 @@ pub struct ExecutionContext {
     pub stopped: bool,
     pub returndata: Bytes,
     pub jumpdests: Vec<usize>,
+    pub calldata: Calldata,
 }
 
 impl ExecutionContext {
@@ -25,7 +27,8 @@ impl ExecutionContext {
             pc: 0,
             stopped: false,
             returndata: Bytes::new(),
-            jumpdests: Self::valid_jump_destinations(code),
+            jumpdests: Self::valid_jump_destinations(code.clone()),
+            calldata: Calldata::new(code),
         }
     }
 

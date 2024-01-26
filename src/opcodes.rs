@@ -7,10 +7,20 @@ pub enum Opcodes {
     ADD,
     MUL,
     SUB,
+    LT,
+    GT,
+    EQ,
+    SHR,
+    SHL,
+    ISZERO,
+    CALLVALUE,
+    CALLDATALOAD,
+    CALLDATASIZE,
     MSTORE8,
     RETURN,
     PC,
     MSIZE,
+    PUSH0,
     PUSH1,
     PUSH2,
     PUSH3,
@@ -104,7 +114,7 @@ impl Opcodes {
         Instruction::register_instruction(0x59, "MSIZE".to_string(), Box::new(Opcodes::MSIZE));
 
         // PUSH Instructions
-
+        Instruction::register_instruction(0x5F, "PUSH0".to_string(), Box::new(Opcodes::PUSH0));
         Instruction::register_instruction(0x60, "PUSH1".to_string(), Box::new(Opcodes::PUSH1));
         Instruction::register_instruction(0x61, "PUSH2".to_string(), Box::new(Opcodes::PUSH2));
         Instruction::register_instruction(0x62, "PUSH3".to_string(), Box::new(Opcodes::PUSH3));
@@ -183,6 +193,30 @@ impl Opcodes {
             "JUMPDEST".to_string(),
             Box::new(Opcodes::JUMPDEST),
         );
+
+        // Compare Instructions
+        Instruction::register_instruction(0x10, "LT".to_string(), Box::new(Opcodes::LT));
+        Instruction::register_instruction(0x11, "GT".to_string(), Box::new(Opcodes::GT));
+        Instruction::register_instruction(0x14, "EQ".to_string(), Box::new(Opcodes::EQ));
+        Instruction::register_instruction(0x1B, "SHL".to_string(), Box::new(Opcodes::SHL));
+        Instruction::register_instruction(0x1C, "SHR".to_string(), Box::new(Opcodes::SHR));
+        Instruction::register_instruction(0x15, "ISZERO".to_string(), Box::new(Opcodes::ISZERO));
+
+        Instruction::register_instruction(
+            0x34,
+            "CALLVALUE".to_string(),
+            Box::new(Opcodes::CALLVALUE),
+        );
+        Instruction::register_instruction(
+            0x35,
+            "CALLDATALOAD".to_string(),
+            Box::new(Opcodes::CALLDATALOAD),
+        );
+        Instruction::register_instruction(
+            0x36,
+            "CALLDATASIZE".to_string(),
+            Box::new(Opcodes::CALLDATASIZE),
+        );
     }
 }
 pub trait OpcodeExecutor: Send + Sync + Debug {
@@ -211,9 +245,10 @@ impl OpcodeExecutor for Opcodes {
                 let b = context.stack.pop().unwrap();
                 context.stack.push(a.checked_sub(b).unwrap()).unwrap();
             }
+
             Opcodes::MSTORE8 => {
                 let offset = context.stack.pop().unwrap();
-                let value = context.stack.pop().unwrap() % 256;
+                let value = context.stack.pop().unwrap() % 128;
                 context.memory.store(offset, value).unwrap();
             }
             Opcodes::RETURN => {
@@ -224,8 +259,11 @@ impl OpcodeExecutor for Opcodes {
             Opcodes::PC => context.stack.push(context.pc).unwrap(),
             Opcodes::MSIZE => context
                 .stack
-                .push(32 * (context.memory.active_words()))
+                .push(16 * (context.memory.active_words()))
                 .unwrap(),
+            Opcodes::PUSH0 => {
+                context.stack.push(0).unwrap();
+            }
             Opcodes::PUSH1 => {
                 let value = context.read_code(1);
                 context.stack.push(value).unwrap();
@@ -492,6 +530,69 @@ impl OpcodeExecutor for Opcodes {
                 }
             }
             Opcodes::JUMPDEST => {}
+
+            Opcodes::LT => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                if a < b {
+                    context.stack.push(1).unwrap();
+                } else {
+                    context.stack.push(0).unwrap();
+                }
+            }
+            Opcodes::GT => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                if a > b {
+                    context.stack.push(1).unwrap();
+                } else {
+                    context.stack.push(0).unwrap();
+                }
+            }
+            Opcodes::EQ => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                if a == b {
+                    context.stack.push(1).unwrap();
+                } else {
+                    context.stack.push(0).unwrap();
+                }
+            }
+            Opcodes::ISZERO => {
+                let a = context.stack.pop().unwrap();
+
+                if a == 0 {
+                    context.stack.push(1).unwrap();
+                } else {
+                    context.stack.push(0).unwrap();
+                }
+            }
+            Opcodes::SHL => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                context.stack.push(b << a).unwrap();
+            }
+            Opcodes::SHR => {
+                let a = context.stack.pop().unwrap();
+                let b = context.stack.pop().unwrap();
+
+                context.stack.push(b >> a).unwrap();
+            }
+            Opcodes::CALLVALUE => {
+                context.stack.push(0).unwrap();
+            }
+            Opcodes::CALLDATALOAD => {
+                let offset = context.stack.pop().unwrap();
+                let value = context.calldata.read_word(offset) as usize;
+                context.stack.push(value).unwrap();
+            }
+            Opcodes::CALLDATASIZE => {
+                context.stack.push(context.calldata.data.len()).unwrap();
+            }
         }
     }
 }

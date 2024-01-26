@@ -1,5 +1,3 @@
-use std::ops::BitAnd;
-
 use bytes::{BufMut, Bytes, BytesMut};
 
 #[derive(Debug)]
@@ -15,7 +13,7 @@ pub enum MemoryError {
 }
 
 impl Memory {
-    const ZERO_WORD: [usize; 32] = [0; 32];
+    const ZERO_WORD: [usize; 16] = [0; 16];
     pub fn new() -> Self {
         Self { memory: Vec::new() }
     }
@@ -34,12 +32,12 @@ impl Memory {
         if offset > self.memory.len() {
             return 0;
         }
-
+        self.expand_if_needed(offset);
         self.memory[offset]
     }
 
-    // Todo: Return [u8;8] instead of Bytes?
     pub fn load_range(&mut self, offset: usize, length: usize) -> Bytes {
+        self.expand_if_needed(offset);
         let mut bytes = BytesMut::new();
         for i in offset..offset + length {
             let data = self.load(i).to_ne_bytes(); // Convert usize to [u8; 8]
@@ -47,11 +45,33 @@ impl Memory {
                 bytes.put_u8(*byte);
             }
         }
-        bytes.freeze() // Convert BytesMut to Bytes
+        bytes.freeze()
+    }
+
+    // TODO:
+    // Currently handles only upto 16 bytes
+    // pub fn load_word(&mut self, offset: usize) -> u128 {
+    //     let range = self.load_range(offset, 16); // Ensure loading 16 bytes for a u128
+    //     let mut bytes = [0u8; 16];
+    //     // Copy bytes from 'range' into 'bytes' array
+    //     for (i, &byte) in range.iter().enumerate() {
+    //         bytes[i] = byte;
+    //     }
+
+    //     // Convert the bytes array into a u128
+    //     u128::from_be_bytes(bytes)
+    // }
+
+    pub fn store_word(&mut self, offset: usize, value: usize) {
+        self.expand_if_needed(offset + 16);
+
+        for i in 0..16 {
+            self.memory[offset + 16 - i] = value & (255_u128.wrapping_shl((i * 8) as u32)) as usize;
+        }
     }
 
     pub fn active_words(&self) -> usize {
-        match self.memory.len().checked_div(32) {
+        match self.memory.len().checked_div(16) {
             Some(v) => v,
             None => todo!(),
         }
@@ -61,9 +81,8 @@ impl Memory {
         if offset < self.memory.len() {
             return;
         }
-        let active_words_after = std::cmp::max(self.active_words(), (offset + 1).div_ceil(32));
+        let active_words_after = std::cmp::max(self.active_words(), (offset + 1).div_ceil(16));
         let additional_words = active_words_after.saturating_sub(self.active_words());
-
         for _ in 0..additional_words {
             self.memory.extend_from_slice(&Self::ZERO_WORD);
         }
@@ -87,17 +106,17 @@ mod tests {
         let value = 10;
         let mut memory = Memory::new();
         let _ = memory.store(offset, value);
-        assert_eq!(memory.memory.len(), 32);
+        assert_eq!(memory.memory.len(), 16);
 
         memory.store(2, value).unwrap();
-        assert_eq!(memory.memory.len(), 32);
+        assert_eq!(memory.memory.len(), 16);
 
-        memory.store(31, value).unwrap();
-        assert_eq!(memory.memory.len(), 32);
+        memory.store(15, value).unwrap();
+        assert_eq!(memory.memory.len(), 16);
 
         // Activate 2nd word
-        memory.store(35, value).unwrap();
-        assert_eq!(memory.memory.len(), 64);
+        memory.store(17, value).unwrap();
+        assert_eq!(memory.memory.len(), 32);
     }
 
     #[test]
@@ -111,16 +130,16 @@ mod tests {
         memory.store(2, value).unwrap();
         assert_eq!(memory.active_words(), 1);
 
-        memory.store(31, value).unwrap();
+        memory.store(15, value).unwrap();
         assert_eq!(memory.active_words(), 1);
 
-        // Activate 2nd word
+        // Activate 3rd word
         memory.store(35, value).unwrap();
-        assert_eq!(memory.active_words(), 2);
+        assert_eq!(memory.active_words(), 3);
 
-        // Activate 4th word
-        memory.store(126, value).unwrap();
-        assert_eq!(memory.active_words(), 4);
+        // Activate 5th word
+        memory.store(65, value).unwrap();
+        assert_eq!(memory.active_words(), 5);
     }
 
     #[test]
