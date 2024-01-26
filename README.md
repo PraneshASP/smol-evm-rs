@@ -5,8 +5,8 @@
 > It is important to note that the code is not optimized and may contain bugs. It is primarily intended for educational purposes. So don't use any code from this repo for production.
 
 `smol-evm-rs` is a toy implementation of the Ethereum Virtual Machine, inspired by the [smol-evm](https://github.com/karmacoma-eth/smol-evm) project, originally implemented in Python by karmacoma. The primary goal of the project is to increase my Rust proficiency. 
-- [X] [**Part1**: The execution context ](https://github.com/PraneshASP/smol-evm-rs/tree/part-1)
-- [X] [**Part2**: Branching instructions](https://github.com/PraneshASP/smol-evm-rs/tree/part-2) 
+- [X] [**Part 1**: The execution context ](https://github.com/PraneshASP/smol-evm-rs/tree/part-1)
+- [X] [**Part 2**: Branching instructions](https://github.com/PraneshASP/smol-evm-rs/tree/part-2) 
 - [X] [**Part 3**: Calldata & comparison instructions](https://github.com/PraneshASP/smol-evm-rs/tree/part-3) 
 
 
