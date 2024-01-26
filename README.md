@@ -4,12 +4,10 @@
 > [!WARNING]  
 > It is important to note that the code is not optimized and may contain bugs. It is primarily intended for educational purposes. So don't use any code from this repo for production.
 
-`smol-evm-rs` is a Rust port of the [smol-evm](https://github.com/karmacoma-eth/smol-evm) project, originally implemented in Python by karmacoma. This project aims to implement the Ethereum Virtual Machine (EVM) from scratch using Rust. The primary goal of the project is to learn Rust. 
-
-
+`smol-evm-rs` is a toy implementation of the Ethereum Virtual Machine, inspired by the [smol-evm](https://github.com/karmacoma-eth/smol-evm) project, originally implemented in Python by karmacoma. The primary goal of the project is to increase my Rust proficiency. 
 - [X] [**Part1**: The execution context ](https://github.com/PraneshASP/smol-evm-rs/tree/part-1)
 - [X] [**Part2**: Branching instructions](https://github.com/PraneshASP/smol-evm-rs/tree/part-2) 
-- [ ] [**Part 3**: Calldata and Function dispatcher](https://github.com/PraneshASP/smol-evm-rs/tree/part-3)(This branch)
+- [X] [**Part 3**: Calldata and Function dispatcher](https://github.com/PraneshASP/smol-evm-rs/tree/part-3)(This branch)
 
 
 ## Getting started:
@@ -25,9 +23,9 @@
    git clone https://github.com/PraneshASP/smol-evm-rs.git
    cd smol-evm-rs
    ```
-2. Switch to the `part-2` branch:
+2. Switch to the `part-3` branch:
     ```bash
-    git checkout part-2
+    git checkout part-3
     ```
 3. Build the project:
    ```bash
@@ -90,34 +88,35 @@ Opcode: 96
 Stack: [4, 0, 16, 0]
 Memory: []
 ---------
-Opcode: 83
 "MSTORE8" @ pc=12
 Stack: [4, 0]
-Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---------
-Opcode: 96
 "PUSH1" @ pc=13
 Stack: [4, 0, 1]
-Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---------
-Opcode: 96
 "PUSH1" @ pc=15
 Stack: [4, 0, 1, 0]
-Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---------
-Opcode: 243
 "RETURN" @ pc=17
 Stack: [4, 0]
-Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Memory: [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ---------
 Output : 0x1000000000000000
 
 ```
  
 > [!NOTE]  
-> Supported Opcodes: `ADD`,`SUB`,`MUL`,`PUSH1`, `MSTORE8`, `RETURN`, `STOP`,`JUMP`, `JUMPI`,`JUMPDEST`, `SWAP[1-16]`, `PUSH[1-32]`and `DUP[1-16]`
+> Supported Opcodes: `ADD`,`SUB`,`MUL`,`PUSH1`, `MSTORE8`, `RETURN`, `STOP`,`JUMP`, `JUMPI`,`JUMPDEST`,`GT` ,`LT`, `ISZERO`,`SHR`,SHL`,`CALLDATALOAD`, `CALLDATASIZE`, `CALLVALUE`,`SWAP[1-16]`, `PUSH[0-32]`and `DUP[1-16]`
 
-
+### Improvement ideas:
+- Make word size 32 instead of 16.
+- Implement remaining opcodes like MSTORE, MLOAD, CALLDATACOPY
+- Implement `gas` calculation. 
+- Add more tests.
+  
 ## Acknowledgments
 
 - [karmacoma-eth](https://github.com/karmacoma-eth) for the original Python implementation of `smol-evm`.
